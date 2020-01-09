@@ -42,22 +42,25 @@ switch ($testo) {
    	break;	
 }
 if($testo == "vergine"){
-		$ms = "creiamo evento";
+		$ms = "punti";
 		sendMessage($utente, $ms);
-		$ms = "certamente";
+		prendidaldatabase($utente){
+		aggiungi punti();	
 		sendMessage($utente, $ms);
 		exit();
 }elseif($testo == "capricorno"){
-		$ms = "quando vuole fare l' assemblea";
-		sendMessage($admin, $ms);
-		$msgcanale="prossima assemblea";		
-		inviamessaggiocanale($msgcanale);	
-}elseif($testo == "manda notifica"){
-		$ms = "notifica inviata nel canale";
-		$msgcanale="allert";
-		sendMessage($admin, $ms);
-		inviamessaggiocanale($msgcanale);
-	
+		$ms = "punti";
+		sendMessage($utente, $ms);
+		prendidaldatabase($utente)
+		aggiungi punti();
+		sendMessage($utente, $ms);
+		exit();	
+}elseif($testo == "classifica"){
+		$ms = "la classifica";
+		sendMessage($utente, $ms);
+		prendidaldatabase($utente){
+		sendMessage($utente, $ms);
+		exit();	
 }
 if($querydata == "ModificaMessaggio"){
     editMessageText($queryUserId,$querymsgid,"HEYLA!");
@@ -66,18 +69,19 @@ if($querydata == "ModificaMessaggio"){
 	
 function tastierastart($utente){
 	$messaggio = "osserva la tastiera e usa i suoi comandi";
-    	$tastiera = '&reply_markup={"keyboard":[["aggiungi"],["togli"],[" "],[" "]]}';
+    	$tastiera = '&reply_markup={"keyboard":[["vergine"],["capricorno"],["classifica"]]}';
     	$url = "$GLOBALS[completo]"."/sendMessage?chat_id=".$utente."&parse_mode=HTML&text=".$messaggio.$tastiera;
     	file_get_contents($url);
 }
-function tastieracalendario($utente,$dataoggi){
-    $message = $dataoggi;
-   	$tastiera = '&reply_markup={"inline_keyboard":[[{"text":"1","callback_data":"Prenota"},{"text":"2","callback_data":"Prenota"},{"text":"3","callback_data":"Prenota"},{"text":"4","callback_data":"Prenota"},{"text":"5","callback_data":"Prenota"},{"text":"6","callback_data":"Prenota"},{"text":"7","callback_data":"Prenota"}]]}';
-    $tastiera2 = '&reply_markup={"inline_keyboard":[[{"text":"8","callback_data":"Prenota"},{"text":"9","callback_data":"Prenota"},{"text":"10","callback_data":"Prenota"},{"text":"11","callback_data":"Prenota"},{"text":"12","callback_data":"Prenota"},{"text":"13","callback_data":"Prenota"},{"text":"14","callback_data":"Prenota"}]]}';
-    $url = $GLOBALS[completo].'/sendMessage?chat_id='.$utente.'&parse_mod=HTML&text='.$message.$tastiera;
-    $url2 = $GLOBALS[completo].'/sendMessage?chat_id='.$utente.'&parse_mod=HTML'.$message.$tastiera2;	
-    file_get_contents($url);
-}
+			
+function aggiungipuntitastiera($utente){
+	$messaggio = "osserva la tastiera e usa i suoi comandi";
+    	$tastiera = '&reply_markup={"keyboard":[["++"],["capricorno"],["--"]]}';
+    	$url = "$GLOBALS[completo]"."/sendMessage?chat_id=".$utente."&parse_mode=HTML&text=".$messaggio.$tastiera;
+    	file_get_contents($url);
+}			
+			
+
 function sendMessage($utente, $msg){
 		$url = $GLOBALS[completo]."/sendMessage?chat_id=".$utente."&text=".urlencode($msg);
 		file_get_contents($url);
@@ -87,15 +91,8 @@ function editMessageText($chatId,$message_id,$newText){
     file_get_contents($url);
 }
 
-//data
-function getdataoggi($datamessaggio){
-  $datazioneunix = gmdate("d.m.y", $datamessaggio);
-  return $datazioneunix;
-}
-function deleteMessage($utente, $message_id){
-	$url = $GLOBALS[completo]."/deleteMessage?chat_id=".$utente."&$message_id=".urlencode($message_id);
-	file_get_contents($url);
-}
+
+
 function inserireneldatabase($utente,$dataoggi){
 	$db =pg_connect("host= ec2-54-247-96-169.eu-west-1.compute.amazonaws.com port=5432 dbname=d2hsht934ovhs9 user=maghsyclqxkpyw password=50ac10525450c60de9157e57e0ab6432f320f5ef3d8ee1650818e491644f51bc");
 	$query = "INSERT INTO prenotazioni (nome, quando, ora) VALUES ('$utente', '099','$dataoggi')";
